@@ -16,3 +16,5 @@ As for future ideas, one possibility is to explore the integration of the AnyTon
 Integrating the AnyTone BT-01 bluetooth mic into the software mic solution would require understanding the communication protocol and command structure of the bluetooth mic. Once the protocol is deciphered, the software mic could send appropriate commands and receive responses from the bluetooth mic, enabling wireless interaction with the radio. If you have any information about this idea, please create an issue.
 
 When running the code, be sure to update the port to the correct one for your digirig. The callsign text can also be updated to your callsign.
+
+Software Mic v1.0 Release Notes - Initial Release
