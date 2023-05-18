@@ -1,6 +1,10 @@
 # AT-D578UV-software-mic
  AT-D578UV software mic, hex codes, and CAT config info.
 
+ Code: https://github.com/jrobertfisher/AT-D578UV-software-mic
+
+ Wiki: https://github.com/jrobertfisher/AT-D578UV-software-mic/wiki
+
 The AT-D578UV software mic is a software-based solution that emulates the functionality of the physical microphone for the AT-D578UV radio. It utilizes hex codes that correspond to the button presses on the hand microphone to control the radio's operations.
 
 To capture the hex codes, traffic on the wire between the radio and the physical microphone was sniffed. The communication traffic was intercepted to determine the specific hex codes associated with each physical mic button press. These hex codes represent commands that control various features of the radio, such as zone and channel selection, menu browsing, VFO switching, PTT control, and more.
