@@ -1,3 +1,6 @@
+#Copyright 2023 Rob Fisher
+#Free for public use.
+
 import tkinter as tk
 from tkinter import *
 from PIL import ImageTk, Image, ImageDraw
