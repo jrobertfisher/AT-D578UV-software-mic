@@ -27,8 +27,8 @@ ser_stop_event = threading.Event()
 Button_A_stop_event = threading.Event()
 ptt_stop_event = threading.Event()
 
-for file in os.listdir('./at-d578uvIII-handmic/AT-D578UV-software-mic'):
-    print(file)
+# for file in os.listdir('.'):
+#     print(file)
 
 # GUI Window
 window = tk.Tk()
@@ -37,7 +37,9 @@ window.geometry("400x600")
 window.resizable(False,False)
 
 # Mic Image
-image = Image.open("at-d578uvIII-handmic/AT-D578UV-software-mic/AT-D578UVIII.png")
+script_dir = os.path.dirname(os.path.abspath(__file__))
+image_path = os.path.join(script_dir, "AT-D578UVIII.png")
+image = Image.open(image_path)
 resized_image = image.resize((303, 578), Image.ANTIALIAS)
 tk_image = ImageTk.PhotoImage(resized_image)
 background_label = tk.Label(window, image=tk_image)
@@ -116,7 +118,9 @@ def stop_Button_PTT_thread():
         ptt_stop_event.set()
         button_PTT_thread.join()
 
-button_ptt_image = Image.open("./at-d578uvIII-handmic/AT-D578UV-software-mic/button_ptt.png")
+script_dir = os.path.dirname(os.path.abspath(__file__))
+image_path = os.path.join(script_dir, "button_ptt.png")
+button_ptt_image = Image.open(image_path)
 resize_button_ptt = button_ptt_image.resize((59, 71), Image.ANTIALIAS)
 button_ptt = ImageTk.PhotoImage(resize_button_ptt)
 
@@ -950,37 +954,49 @@ button_size = 60
 button_A_x = 102
 button_A_y = 340
 
-buton_A_image = Image.open("./at-d578uvIII-handmic/AT-D578UV-software-mic/button_A.png")
+script_dir = os.path.dirname(os.path.abspath(__file__))
+image_path = os.path.join(script_dir, "button_A.png")
+buton_A_image = Image.open(image_path)
 resize_button_A = buton_A_image.resize((button_size, button_size), Image.ANTIALIAS)
 button_A = ImageTk.PhotoImage(resize_button_A)
 button_A_button = tk.Button(window, image=button_A, border=0, highlightthickness=0, background="#2B2B2B", activebackground="#2B2B2B", padx=0, pady=0, height=button_size-8, width=button_size-8, command=start_Button_A_thread)
 button_A_button.place(x=button_A_x,y=button_A_y)
 
-buton_B_image = Image.open("./at-d578uvIII-handmic/AT-D578UV-software-mic/button_B.png")
+script_dir = os.path.dirname(os.path.abspath(__file__))
+image_path = os.path.join(script_dir, "button_B.png")
+buton_B_image = Image.open(image_path)
 resize_button_B = buton_B_image.resize((button_size, button_size), Image.ANTIALIAS)
 button_B = ImageTk.PhotoImage(resize_button_B)
 button_B_button = tk.Button(window, image=button_B, border=0, highlightthickness=0, background="#2B2B2B", activebackground="#2B2B2B", padx=0, pady=0, height=button_size-8, width=button_size-8, command=start_Button_B_thread)
 button_B_button.place(x=button_A_x+(58*1),y=button_A_y)
                           
-buton_C_image = Image.open("./at-d578uvIII-handmic/AT-D578UV-software-mic/button_C.png")
+script_dir = os.path.dirname(os.path.abspath(__file__))
+image_path = os.path.join(script_dir, "button_C.png")
+buton_C_image = Image.open(image_path)
 resize_button_C = buton_C_image.resize((button_size, button_size), Image.ANTIALIAS)
 button_C = ImageTk.PhotoImage(resize_button_C)
 button_C_button = tk.Button(window, image=button_C, border=0, highlightthickness=0, background="#2B2B2B", activebackground="#2B2B2B", padx=0, pady=0, height=button_size-8, width=button_size-8, command=start_Button_C_thread)
 button_C_button.place(x=button_A_x+(58*2),y=button_A_y)
 
-buton_D_image = Image.open("./at-d578uvIII-handmic/AT-D578UV-software-mic/button_D.png")
+script_dir = os.path.dirname(os.path.abspath(__file__))
+image_path = os.path.join(script_dir, "button_D.png")
+buton_D_image = Image.open(image_path)
 resize_button_D = buton_D_image.resize((button_size, button_size), Image.ANTIALIAS)
 button_D = ImageTk.PhotoImage(resize_button_D)
 button_D_button = tk.Button(window, image=button_D, border=0, highlightthickness=0, background="#2B2B2B", activebackground="#2B2B2B", padx=0, pady=0, height=button_size-8, width=button_size-8, command=start_Button_D_thread)
 button_D_button.place(x=button_A_x+(58*3),y=button_A_y)
 
-button_subptt_image = Image.open("./at-d578uvIII-handmic/AT-D578UV-software-mic/subptt.png")
+script_dir = os.path.dirname(os.path.abspath(__file__))
+image_path = os.path.join(script_dir, "subptt.png")
+button_subptt_image = Image.open(image_path)
 resize_subptt = button_subptt_image.resize((40, 101), Image.ANTIALIAS)
 button_subptt = ImageTk.PhotoImage(resize_subptt)
 button_subptt_button = tk.Button(window, image=button_subptt, border=0, highlightthickness=0, background="#2B2B2B", activebackground="#2B2B2B", padx=0, pady=0, command=start_Button_SubAB_thread)
 button_subptt_button.place(x=74,y=141)
 
-button_ptt_image = Image.open("./at-d578uvIII-handmic/AT-D578UV-software-mic/button_ptt.png")
+script_dir = os.path.dirname(os.path.abspath(__file__))
+image_path = os.path.join(script_dir, "button_ptt.png")
+button_ptt_image = Image.open(image_path)
 resize_button_ptt = button_ptt_image.resize((71, 59), Image.ANTIALIAS)
 button_ptt = ImageTk.PhotoImage(resize_button_ptt)
 button_ptt_button = PTTButton(window, image=button_ptt, border=0, highlightthickness=0, padx=0, pady=0)

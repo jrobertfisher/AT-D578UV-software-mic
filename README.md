@@ -18,3 +18,6 @@ Integrating the AnyTone BT-01 bluetooth mic into the software mic solution would
 When running the code, be sure to update the port to the correct one for your digirig. The callsign text can also be updated to your callsign.
 
 Software Mic v1.0 Release Notes - Initial Release
+Software Mic v1.0.1 Release Notes
+    Fixed image paths
+    Complied an exe and published it to the dist folder
