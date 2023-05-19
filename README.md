@@ -20,4 +20,4 @@ When running the code, be sure to update the port to the correct one for your di
 Software Mic v1.0 Release Notes - Initial Release
 Software Mic v1.0.1 Release Notes
     Fixed image paths
-    Complied an exe and published it to the dist folder
+    Complied an exe and published it to the dist folder (the exe is hard coded for Com Port 4, I'll add a configuration tab to set the port and call sign info soon.)
