@@ -8,15 +8,7 @@ a = Analysis(
     ['d578uv-gui.py'],
     pathex=[],
     binaries=[],
-    datas = [
-    ( 'AT-D578UVIII.png', '.' ),
-    ( 'button_A.png', '.' ),
-    ( 'button_B.png', '.' ),
-    ( 'button_C.png', '.' ),
-    ( 'button_D.png', '.' ),
-    ( 'button_ptt.png', '.' ),
-    ( 'subptt.png', '.' )
-    ],
+    datas=[('*.png', '.'), ('*.conf', '.'), ('*.ico', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -34,7 +26,7 @@ exe = EXE(
     a.scripts,
     a.binaries,
     a.zipfiles,
-    a.datas, 
+    a.datas,
     [],
     name='d578uv-gui',
     debug=False,
@@ -49,4 +41,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon=['favicon.ico'],
 )

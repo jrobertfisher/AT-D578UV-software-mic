@@ -21,3 +21,10 @@ Software Mic v1.0 Release Notes - Initial Release
 Software Mic v1.0.1 Release Notes
     Fixed image paths
     Complied an exe and published it to the dist folder (the exe is hard coded for Com Port 4, I'll add a configuration tab to set the port and call sign info soon.)
+Software Mic v1.0.2 Release Notes
+    Changed buttons to include IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET), to make clicks more responsive.
+    Added a .conf file to manage settings.
+    Opens .conf window, then starts connection
+    When settings button is pressed, the serial connection is stopped, when the connect button is pressed, the settings are read from the .conf file and a new connection is started.
+    Added icons.
+    Windows EXE compiled and posted in the dist folder.

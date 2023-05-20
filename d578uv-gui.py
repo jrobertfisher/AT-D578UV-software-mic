@@ -1,28 +1,297 @@
 #Copyright 2023 Rob Fisher
-#Free for public use.
+#Version 1.0.2
+#pyinstaller command: pyinstaller .\d578uv-gui.py --onefile --noconsole --icon favicon.ico --add-data="*.png;." --add-data="*.conf;." --add-data="*.ico;."
+#ren d578uv-gui.exe d578uv-win-x64.exe
 
 import tkinter as tk
-from tkinter import *
+from tkinter import ttk
+#from tkinter import *
 from PIL import ImageTk, Image, ImageDraw
 import os
 import serial
+import serial.tools.list_ports
 import time
 import threading
 from datetime import datetime
+import configparser
+#import struct
 
+icon_file = "favicon.ico"
+icon_dir = os.path.dirname(os.path.abspath(__file__))
+icon_path = os.path.join(icon_dir, icon_file)
+
+config_file = "d578uv.conf"
+config = configparser.ConfigParser()
+config_dir = os.path.dirname(os.path.abspath(__file__))
+config_path = os.path.join(config_dir, config_file)
+
+ser = None
+window_state = 0
+
+def conf_exists():
+    # Check if the .conf file exists
+    if not config.read(config_path):
+        config['Operator'] = {'callsign':'change'}
+        #config['Digirig'] = {'port': 'COM4'}
+        config['Serial'] = {'port': 'COM4'} # The name or number of the serial port to use (e.g., "COM1" or "/dev/ttyUSB0")
+        config['Serial'] = {'baudrate':'115200'} # The baud rate of the serial communication (e.g., 1200, 1800, 2400, 4800, 9600, 19200, 38400, 57600, 115200).
+        config['Serial'] = {'bytesize':'EIGHTBITS'} # Number of data bits. Possible values: FIVEBITS, SIXBITS, SEVENBITS, EIGHTBITS
+        config['Serial'] = {'parity':'PARITY_NONE'} # Enable parity checking. Possible values: PARITY_NONE, PARITY_EVEN, PARITY_ODD PARITY_MARK, PARITY_SPACE
+        config['Serial'] = {'stopbits':'STOPBITS_ONE'} # The number of stop bits. Possible values: STOPBITS_ONE, STOPBITS_ONE_POINT_FIVE, STOPBITS_TWO
+        config['Serial'] = {'timeout':'1'} #The timeout duration for reading operations in seconds.
+        config['Serial'] = {'pollinterval':'1'} #Keep alive between radio and digirig
+        config['Serial'] = {'xonxoff':'FALSE'} #Enable software flow control (XON/XOFF).
+        #Write new .conf file
+        with open(config_path, 'w') as file:
+            config.write(file)
+
+#### Open Settings Window ####
+def save_settings(port, callsign, baudrate, bytesize, parity, stopbits, timeout, pollinterval, xonxoff):
+    config = configparser.ConfigParser()
+    config.read(config_path)
+
+    # Update the port value in the configuration file
+    config.set('Operator', 'callsign', callsign)
+    config.set('Serial', 'port',port)
+    config.set('Serial', 'baudrate',baudrate)
+    config.set('Serial', 'bytesize',bytesize)
+    config.set('Serial', 'parity',parity)
+    config.set('Serial', 'stopbits',stopbits)
+    config.set('Serial', 'timeout',timeout)
+    config.set('Serial', 'pollinterval',pollinterval)
+    config.set('Serial', 'xonxoff',xonxoff)
+               
+    # Save the updated configuration file
+    with open(config_path, 'w') as file:
+        config.write(file)
+
+def create_settings_window():
+    global window_state
+    global stop_event
+    # Use the TTK style to match the OS appearance
+    
+    if window_state == 0:
+        settings_window = tk.Tk()
+    else:
+        settings_window = tk.Toplevel(window)
+        stop_event.set()
+        ser.close()
+        print ("Serial port closed (by settings window)")
+        red_light.configure(bg="#F0F0F0") #Gray
+        button_connect_button.configure(state="normal")
+        #serial_thread.join()
+        stop_event.clear()
+    window_state = 1
+
+    #settings_window.config(background="#262626")
+    settings_window.title("Settings")
+    settings_window.geometry("260x440")
+    settings_window.iconbitmap(icon_path)
+
+    # Read the current .conf values
+    config = configparser.ConfigParser()
+    config.read(config_path)
+    current_callsign = config.get('Operator', 'callsign')
+    current_port = config.get('Serial', 'port')
+    current_baudrate = config.get('Serial', 'baudrate')
+    current_bytesize = config.get('Serial', 'bytesize')
+    current_parity = config.get('Serial', 'parity')
+    current_stopbits = config.get('Serial', 'stopbits')
+    current_timeout = config.get('Serial', 'timeout')
+    current_pollinterval = config.get('Serial', 'pollinterval')
+    current_xonxoff = config.get('Serial', 'xonxoff')
+
+    operator_frame= tk.LabelFrame(settings_window, text="Operator")
+    operator_frame.pack(padx=10, pady=10, anchor="nw")
+    
+    ## Callsign
+    # Create a label for the callsign entry
+    callsign_label = tk.Label(operator_frame, text="Callsign:")
+    callsign_label.pack(side="left", padx=(5,25), pady=5)
+    # Create an entry field for callsign input
+    callsign_entry = tk.Entry(operator_frame)
+    callsign_entry.insert(tk.END, current_callsign.upper())
+    callsign_entry.pack(padx=(5,24), pady=5)
+
+    ## Create a label frame for the CAT Control section
+    cat_frame = tk.LabelFrame(settings_window, text="CAT Control")
+    cat_frame.pack(padx=10, pady=10, anchor="nw")
+
+    ## Serial Port
+    # Create the Serial Port label inside the CAT Control frame
+    serial_label = tk.Label(cat_frame, text="Serial Port:")
+    serial_label.grid(row=0, column=0, sticky="w", padx=5, pady=5)
+    # Get a list of available ports
+    available_ports = [port.device for port in serial.tools.list_ports.comports()]
+    # Create a dropdown menu for port selection
+    selected_port = tk.StringVar(settings_window)
+    selected_port.set(current_port)  # Set the default value
+    port_dropdown = ttk.Combobox(cat_frame, values=available_ports, textvariable=selected_port)
+    port_dropdown.grid(row=0, column=0, sticky="w", padx=80, pady=5)
+
+    ## Baudrate
+    baudrate_label = tk.Label(cat_frame, text="Baudrate:")
+    baudrate_label.grid(row=1, column=0, sticky="w", padx=5, pady=5)
+    selected_baudrate = tk.StringVar(value=current_baudrate)
+    baudrate_options = ['1200', '2400', '4800', '9600', '19200', '38400', '57600', '115200']
+    baudrate_dropdown = ttk.Combobox(cat_frame, values=baudrate_options, textvariable=selected_baudrate)
+    baudrate_dropdown.grid(row=1, column=0, sticky="w", padx=80, pady=5)
+
+    ## Bytesize
+    bytesize_frame = tk.LabelFrame(cat_frame, text="Data Bits", padx=10)
+    bytesize_frame.grid(row=2, column=0, sticky="w", padx=5, pady=5)
+    selected_bytesize = tk.StringVar(value=current_bytesize)
+    bytesize_5 = ttk.Radiobutton(bytesize_frame, text="Default", variable=selected_bytesize, value="")
+    bytesize_7 = ttk.Radiobutton(bytesize_frame, text="Seven", variable=selected_bytesize, value="SEVENBITS")
+    bytesize_8 = ttk.Radiobutton(bytesize_frame, text="Eight", variable=selected_bytesize, value="EIGHTBITS")
+    bytesize_5.grid(row=0, column=1, sticky="w", padx=5, pady=5)
+    bytesize_7.grid(row=0, column=2, sticky="w", padx=5, pady=5)
+    bytesize_8.grid(row=0, column=3, sticky="w", padx=5, pady=5)
+
+    ## Parity
+    parity_frame = tk.LabelFrame(cat_frame, text="Parity", padx=19)
+    parity_frame.grid(row=4, column=0, sticky="w", padx=5, pady=5)
+    selected_parity = tk.StringVar(value=current_parity)
+    parity_none = ttk.Radiobutton(parity_frame, text="None", variable=selected_parity, value="PARITY_NONE")
+    parity_even = ttk.Radiobutton(parity_frame, text="Even", variable=selected_parity, value="PARITY_EVEN")
+    parity_odd = ttk.Radiobutton(parity_frame, text="Odd", variable=selected_parity, value="PARITY_ODD")
+    parity_none.grid(row=0, column=1, sticky="w", padx=5, pady=5)
+    parity_even.grid(row=0, column=2, sticky="w", padx=5, pady=5)
+    parity_odd.grid(row=0, column=3, sticky="w", padx=5, pady=5)
+
+    ## Stopbits
+    stopbits_frame = tk.LabelFrame(cat_frame, text="Stop Bits", padx=44)
+    stopbits_frame.grid(row=5, column=0, sticky="w", padx=5, pady=5)
+    selected_stopbits = tk.StringVar(value=current_stopbits)
+    stopbits_one = ttk.Radiobutton(stopbits_frame, text="1", variable=selected_stopbits, value="STOPBITS_ONE")
+    stopbits_one_point_five = ttk.Radiobutton(stopbits_frame, text="1.5", variable=selected_stopbits, value="STOPBITS_ONE_POINT_FIVE")
+    stopbits_two = ttk.Radiobutton(stopbits_frame, text="2", variable=selected_stopbits, value="STOPBITS_TWO")
+    stopbits_one.pack(side="left", padx=5)
+    stopbits_one_point_five.pack(side="left", padx=5)
+    stopbits_two.pack(side="left", padx=5)
+
+    ## Handshake
+
+    ##Poll Interval
+    # Create the Poll Interval label inside the CAT Control frame
+    pollinterval_label = tk.Label(cat_frame, text="Poll Interval:") # 1 second
+    pollinterval_label.grid(row=6, column=0, sticky="w", padx=5, pady=5)
+    pollinterval_spinbox_value = tk.StringVar(value=current_pollinterval)
+    pollinterval_spinbox = ttk.Spinbox(cat_frame, from_=1, to=5, values=(1,2,3,4,5), textvariable=pollinterval_spinbox_value, wrap=True, state="disabled")
+    pollinterval_spinbox.grid(row=6, column=0, sticky="w", padx=85, pady=5)
+
+    ##Timeout Interval
+    # Create the Poll Interval label inside the CAT Control frame
+    timeout_label = tk.Label(cat_frame, text="Timeout(sec):") # 1 second
+    timeout_label.grid(row=7, column=0, sticky="w", padx=5, pady=5)
+    timeout_spinbox_value = tk.StringVar(value=current_timeout)
+    timeout_spinbox = ttk.Spinbox(cat_frame, from_=1, to=5, values=(1,2,3,4,5), textvariable=timeout_spinbox_value, wrap=True, state="enabled")
+    timeout_spinbox.grid(row=7, column=0, sticky="w", padx=85, pady=5)
+
+    def save_button_clicked():
+        selected_port_value = selected_port.get()
+        callsign_value = callsign_entry.get().upper()[:6]
+        baudrate_value = selected_baudrate.get()  # Replace with the actual value
+        bytesize_value = selected_bytesize.get() # Replace with the actual value
+        parity_value = selected_parity.get()  # Replace with the actual value
+        stopbits_value = selected_stopbits.get()  # Replace with the actual value
+        timeout_value = timeout_spinbox_value.get()  # Replace with the actual value
+        pollinterval_value = pollinterval_spinbox_value.get() #"1"  # Replace with the actual value
+        xonxoff_value = "FALSE"  # Replace with the actual value
+
+        save_settings(
+            selected_port_value,
+            callsign_value,
+            baudrate_value,
+            bytesize_value,
+            parity_value,
+            stopbits_value,
+            timeout_value,
+            pollinterval_value,
+            xonxoff_value
+        )
+        settings_window.destroy()
+        # if serial_thread.is_alive():
+        #     print("Serial thread is running")
+        # else:
+        #     print("Serial thread is not running")
+
+    # Create a button to save the settings
+    save_button = tk.Button(settings_window, text="Save", command=save_button_clicked)
+    save_button.pack()
+
+    settings_window.mainloop()
+
+# Create the settings window
+conf_exists()
+create_settings_window()
+
+#### Open Mic GUI Window ####
+
+#Read .conf file
+config.read(config_path)
+config.sections()
+print(config.sections())
 
 # Configure callsign
-callsign = "KI5QPY"
-# Configure the serial port
-port = 'COM4'  # Replace with the appropriate port for your system
-baud_rate = 115200  # Set the baud rate to 115200
-timeout = 1  # Timeout in seconds
-parity = serial.PARITY_NONE
-stopbits=serial.STOPBITS_ONE
-bytesize = serial.EIGHTBITS
+#callsign = "KI5QPY"
+callsign = config.get('Operator', 'callsign')
+
+## Configure the serial port
+port = config.get('Serial', 'port')
+print(port)
+baudrate = config.get('Serial', 'baudrate')                 #Default = 115200
+print(baudrate)
+timeout = int(config.get('Serial', 'timeout'))              #Default = 1 (seconds)
+print(timeout)
+pollinterval = int(config.get('Serial', 'pollinterval'))    #Default = 1 (seconds)
+print(pollinterval)
+conf_parity = config.get('Serial', 'parity')                #Default = PARITY_NONE
+# Assign the appropriate parity value based on conf_parity
+if conf_parity == "PARITY_NONE":
+    parity = serial.PARITY_NONE
+elif conf_parity == "PARITY_EVEN":
+    parity = serial.PARITY_EVEN
+elif conf_parity == "PARITY_ODD":
+    parity = serial.PARITY_ODD
+elif conf_parity == "PARITY_MARK":
+    parity = serial.PARITY_MARK
+elif conf_parity == "PARITY_SPACE":
+    parity = serial.PARITY_SPACE
+else:
+    parity = serial.PARITY_NONE
+print(parity)
+
+conf_stopbits = config.get('Serial', 'stopbits')        #Default = STOPBITS_ONE
+if conf_stopbits == "STOPBITS_ONE":
+        stopbits = serial.STOPBITS_ONE
+elif conf_stopbits == "STOPBITS_ONE_POINT_FIVE":
+        stopbits = serial.STOPBITS_ONE_POINT_FIVE
+elif conf_stopbits == "STOPBITS_TWO":
+        stopbits = serial.STOPBITS_TWO
+else:
+    stopbits = serial.STOPBITS_ONE
+print(stopbits)
+
+conf_bytesize = config.get('Serial', 'bytesize')        #Default = EIGHTBITS
+if conf_bytesize == "FIVEBITS":
+        bytesize = serial.FIVEBITS
+elif conf_bytesize == "SIXBITS":
+        bytesize = serial.SIXBITS
+elif conf_bytesize == "SEVENBITS":
+        bytesize = serial.SEVENBITS
+elif conf_bytesize == "EIGHTBITS":
+        bytesize = serial.EIGHTBITS
+else:
+    bytesize = serial.EIGHTBITS
+print(bytesize)
 
 # Open the serial port
-ser = serial.Serial(port, baud_rate, timeout=timeout, parity=parity, stopbits=stopbits, bytesize=bytesize)
+try:
+    ser = serial.Serial(port, baudrate, timeout=timeout, parity=parity, stopbits=stopbits, bytesize=bytesize)
+except Exception as e:
+    print(f"Error: {e}")
+
 
 # Create a threading event to signal when to stop the thread
 stop_event = threading.Event()
@@ -33,10 +302,11 @@ ptt_stop_event = threading.Event()
 # for file in os.listdir('.'):
 #     print(file)
 
-# GUI Window
+# Main App Window
 window = tk.Tk()
-window.title("Handmic Emulator - Anytone AT-D578UVIII")
+window.title("Software Mic - Anytone AT-D578UVIII")
 window.geometry("400x600")
+window.iconbitmap(icon_path)
 window.resizable(False,False)
 
 # Mic Image
@@ -51,6 +321,8 @@ background_label.place(x=0, y=0, relwidth=1, relheight=1)
 # Callsign overlay
 label = tk.Label(window, text=callsign, font=("Arial", 19, "bold italic"), foreground="white", background="#262626", padx=0, pady=0)
 label.place(x=155,y=72)
+
+#########BUTTON COMMANDS#########
 
 ## Button PTT
 # Define the command values for click and release
@@ -69,12 +341,22 @@ def Button_PTT_thread():
     print(f"Sent: {COMMAND_CLICK.hex()}")
     red_light.configure(bg="#FF0023") #Red
 
-    # Read the response
-    Button_PTT_Press_Response = ser.read()
-    if len(Button_PTT_Press_Response) > 0:
-        print(f"Response: {Button_PTT_Press_Response.hex()}")
+
+    # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+    ser.timeout = 0.1
+    data = ser.read(1)
+    if data:
+        print(f"Received character: {data.hex()}")
     else:
-        print("No response received")
+        print("No response")
+
+
+    # # Read the response
+    # Button_PTT_Press_Response = ser.read()
+    # if len(Button_PTT_Press_Response) > 0:
+    #     print(f"Response: {Button_PTT_Press_Response.hex()}")
+    # else:
+    #     print("No response received")
 
 def Button_PTT_release():
     if ptt_stop_event.is_set():
@@ -85,12 +367,20 @@ def Button_PTT_release():
     print(f"Sent: {COMMAND_RELEASE.hex()}")
     red_light.configure(bg="#00C800") #Green
 
-    # Read the response
-    Button_PTT_Release_Response = ser.read()
-    if len(Button_PTT_Release_Response) > 0:
-        print(f"Response: {Button_PTT_Release_Response.hex()}")
+    # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+    ser.timeout = 0.1
+    data = ser.read(1)
+    if data:
+        print(f"Received character: {data.hex()}")
     else:
-        print("No response received")
+        print("No response")
+
+    # # Read the response
+    # Button_PTT_Release_Response = ser.read()
+    # if len(Button_PTT_Release_Response) > 0:
+    #     print(f"Response: {Button_PTT_Release_Response.hex()}")
+    # else:
+    #     print("No response received")
 
 def is_double_click():
     global last_button_press_time
@@ -152,14 +442,22 @@ def Button_0_thread():
         print(f"Sent: {Button_0_Press.hex()}")
         
         # Button Push delay        
-        #time.sleep(.1)
-                
-        # Read the response
-        Button_0_Press_Response = ser.read()
-        if len(Button_0_Press_Response) > 0:
-            print(f"Response: {Button_0_Press_Response.hex()}")
+        time.sleep(.1)
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+                
+        # # Read the response
+        # Button_0_Press_Response = ser.read()
+        # if len(Button_0_Press_Response) > 0:
+        #     print(f"Response: {Button_0_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
 button_0_thread = None
 
@@ -185,13 +483,21 @@ def Button_1_thread():
         
         # Button Push delay        
         #time.sleep(.1)
-                
-        # Read the response
-        Button_1_Press_Response = ser.read()
-        if len(Button_1_Press_Response) > 0:
-            print(f"Response: {Button_1_Press_Response.hex()}")
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+                
+        # # Read the response
+        # Button_1_Press_Response = ser.read()
+        # if len(Button_1_Press_Response) > 0:
+        #     print(f"Response: {Button_1_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
 button_1_thread = None
 
@@ -217,13 +523,21 @@ def Button_2_thread():
         
         # Button Push delay        
         #time.sleep(.1)
-                
-        # Read the response
-        Button_2_Press_Response = ser.read()
-        if len(Button_2_Press_Response) > 0:
-            print(f"Response: {Button_2_Press_Response.hex()}")
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+                
+        # # Read the response
+        # Button_2_Press_Response = ser.read()
+        # if len(Button_2_Press_Response) > 0:
+        #     print(f"Response: {Button_2_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
 button_2_thread = None
 
@@ -249,13 +563,21 @@ def Button_3_thread():
         
         # Button Push delay        
         #time.sleep(.1)
-                
-        # Read the response
-        Button_3_Press_Response = ser.read()
-        if len(Button_3_Press_Response) > 0:
-            print(f"Response: {Button_3_Press_Response.hex()}")
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+                
+        # # Read the response
+        # Button_3_Press_Response = ser.read()
+        # if len(Button_3_Press_Response) > 0:
+        #     print(f"Response: {Button_3_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
 button_3_thread = None
 
@@ -281,13 +603,21 @@ def Button_4_thread():
         
         # Button Push delay        
         #time.sleep(.1)
-                
-        # Read the response
-        Button_4_Press_Response = ser.read()
-        if len(Button_4_Press_Response) > 0:
-            print(f"Response: {Button_4_Press_Response.hex()}")
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+                
+        # # Read the response
+        # Button_4_Press_Response = ser.read()
+        # if len(Button_4_Press_Response) > 0:
+        #     print(f"Response: {Button_4_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
 button_4_thread = None
 
@@ -313,13 +643,21 @@ def Button_5_thread():
         
         # Button Push delay        
         #time.sleep(.1)
-                
-        # Read the response
-        Button_5_Press_Response = ser.read()
-        if len(Button_5_Press_Response) > 0:
-            print(f"Response: {Button_5_Press_Response.hex()}")
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+            
+        # # Read the response
+        # Button_5_Press_Response = ser.read()
+        # if len(Button_5_Press_Response) > 0:
+        #     print(f"Response: {Button_5_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
 button_5_thread = None
 
@@ -345,13 +683,21 @@ def Button_6_thread():
         
         # Button Push delay        
         #time.sleep(.1)
-                
-        # Read the response
-        Button_6_Press_Response = ser.read()
-        if len(Button_6_Press_Response) > 0:
-            print(f"Response: {Button_6_Press_Response.hex()}")
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+
+        # Read the response
+        # Button_6_Press_Response = ser.read()
+        # if len(Button_6_Press_Response) > 0:
+        #     print(f"Response: {Button_6_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
 button_6_thread = None
 
@@ -377,13 +723,21 @@ def Button_7_thread():
         
         # Button Push delay        
         #time.sleep(.1)
-                
-        # Read the response
-        Button_7_Press_Response = ser.read()
-        if len(Button_7_Press_Response) > 0:
-            print(f"Response: {Button_7_Press_Response.hex()}")
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+        
+        # # Read the response
+        # Button_7_Press_Response = ser.read()
+        # if len(Button_7_Press_Response) > 0:
+        #     print(f"Response: {Button_7_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
 button_7_thread = None
 
@@ -409,13 +763,21 @@ def Button_8_thread():
         
         # Button Push delay        
         #time.sleep(.1)
-                
-        # Read the response
-        Button_8_Press_Response = ser.read()
-        if len(Button_8_Press_Response) > 0:
-            print(f"Response: {Button_8_Press_Response.hex()}")
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+                
+        # # Read the response
+        # Button_8_Press_Response = ser.read()
+        # if len(Button_8_Press_Response) > 0:
+        #     print(f"Response: {Button_8_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
 button_8_thread = None
 
@@ -441,13 +803,21 @@ def Button_9_thread():
         
         # Button Push delay        
         #time.sleep(.1)
-                
-        # Read the response
-        Button_9_Press_Response = ser.read()
-        if len(Button_9_Press_Response) > 0:
-            print(f"Response: {Button_9_Press_Response.hex()}")
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+                
+        # # Read the response
+        # Button_9_Press_Response = ser.read()
+        # if len(Button_9_Press_Response) > 0:
+        #     print(f"Response: {Button_9_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
 button_9_thread = None
 
@@ -473,13 +843,21 @@ def Button_Pound_thread():
         
         # Button Push delay        
         #time.sleep(.1)
-                
-        # Read the response
-        Button_Pound_Press_Response = ser.read()
-        if len(Button_Pound_Press_Response) > 0:
-            print(f"Response: {Button_Pound_Press_Response.hex()}")
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+                
+        # # Read the response
+        # Button_Pound_Press_Response = ser.read()
+        # if len(Button_Pound_Press_Response) > 0:
+        #     print(f"Response: {Button_Pound_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
 button_Pound_thread = None
 
@@ -505,13 +883,21 @@ def Button_Hash_thread():
         
         # Button Push delay        
         #time.sleep(.1)
-                
-        # Read the response
-        Button_Hash_Press_Response = ser.read()
-        if len(Button_Hash_Press_Response) > 0:
-            print(f"Response: {Button_Hash_Press_Response.hex()}")
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+                
+        # # Read the response
+        # Button_Hash_Press_Response = ser.read()
+        # if len(Button_Hash_Press_Response) > 0:
+        #     print(f"Response: {Button_Hash_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
 button_Hash_thread = None
 
@@ -537,13 +923,21 @@ def Button_SubAB_thread():
 
         # Button Push delay        
         time.sleep(.1)
-                        
-        # Read the response
-        Button_SubAB_Press_Response = ser.read()
-        if len(Button_SubAB_Press_Response) > 0:
-            print(f"Response: {Button_SubAB_Press_Response.hex()}")
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+                        
+        # # Read the response
+        # Button_SubAB_Press_Response = ser.read()
+        # if len(Button_SubAB_Press_Response) > 0:
+        #     print(f"Response: {Button_SubAB_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
 button_SubAB_thread = None
 
@@ -570,12 +964,20 @@ def Button_A_thread():
         # Button Push delay        
         time.sleep(.1)
 
-        # Read the response
-        Button_A_Press_Response = ser.read()
-        if len(Button_A_Press_Response) > 0:
-            print(f"Response: {Button_A_Press_Response.hex()}")
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+
+        # # Read the response
+        # Button_A_Press_Response = ser.read()
+        # if len(Button_A_Press_Response) > 0:
+        #     print(f"Response: {Button_A_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
     # if Button_A_stop_event.is_set():
     #      pass
@@ -604,13 +1006,21 @@ def Button_A_Long_thread():
         
         # Button Push delay        
         time.sleep(.1)
-                
-        # Read the response
-        Button_A_Long_Press_Response = ser.read()
-        if len(Button_A_Long_Press_Response) > 0:
-            print(f"Response: {Button_A_Long_Press_Response.hex()}")
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+
+        # # Read the response
+        # Button_A_Long_Press_Response = ser.read()
+        # if len(Button_A_Long_Press_Response) > 0:
+        #     print(f"Response: {Button_A_Long_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
 button_A_Long_thread = None
 
@@ -633,16 +1043,14 @@ def Button_B_thread():
             break
         ser.write(Button_B_Press)
         print(f"Sent: {Button_B_Press.hex()}")
-        
-        # Button Push delay        
-        time.sleep(.1)
-                
-        # Read the response
-        Button_B_Press_Response = ser.read()
-        if len(Button_B_Press_Response) > 0:
-            print(f"Response: {Button_B_Press_Response.hex()}")
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
 
 button_B_thread = None
 
@@ -668,13 +1076,21 @@ def Button_B_Long_thread():
         
         # Button Push delay        
         time.sleep(.1)
-                
-        # Read the response
-        Button_B_Long_Press_Response = ser.read()
-        if len(Button_B_Long_Press_Response) > 0:
-            print(f"Response: {Button_B_Long_Press_Response.hex()}")
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+                
+        # # Read the response
+        # Button_B_Long_Press_Response = ser.read()
+        # if len(Button_B_Long_Press_Response) > 0:
+        #     print(f"Response: {Button_B_Long_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
 button_B_Long_thread = None
 
@@ -700,13 +1116,21 @@ def Button_C_thread():
         
         # Button Push delay        
         time.sleep(.1)
-                
-        # Read the response
-        Button_C_Press_Response = ser.read()
-        if len(Button_C_Press_Response) > 0:
-            print(f"Response: {Button_C_Press_Response.hex()}")
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+                
+        # # Read the response
+        # Button_C_Press_Response = ser.read()
+        # if len(Button_C_Press_Response) > 0:
+        #     print(f"Response: {Button_C_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
 button_C_thread = None
 
@@ -732,13 +1156,21 @@ def Button_C_Long_thread():
         
         # Button Push delay        
         time.sleep(.1)
-                
-        # Read the response
-        Button_C_Long_Press_Response = ser.read()
-        if len(Button_C_Long_Press_Response) > 0:
-            print(f"Response: {Button_C_Long_Press_Response.hex()}")
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+                
+        # # Read the response
+        # Button_C_Long_Press_Response = ser.read()
+        # if len(Button_C_Long_Press_Response) > 0:
+        #     print(f"Response: {Button_C_Long_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
 button_C_Long_thread = None
 
@@ -763,14 +1195,22 @@ def Button_D_thread():
         print(f"Sent: {Button_D_Press.hex()}")
         
         # Button Push delay        
-        time.sleep(.05)
-                
-        # Read the response
-        Button_D_Press_Response = ser.read()
-        if len(Button_D_Press_Response) > 0:
-            print(f"Response: {Button_D_Press_Response.hex()}")
+        time.sleep(.1)
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+                
+        # # Read the response
+        # Button_D_Press_Response = ser.read()
+        # if len(Button_D_Press_Response) > 0:
+        #     print(f"Response: {Button_D_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
 button_D_thread = None
 
@@ -796,13 +1236,21 @@ def Button_D_Long_thread():
         
         # Button Push delay        
         time.sleep(.1)
-                
-        # Read the response
-        Button_D_Long_Press_Response = ser.read()
-        if len(Button_D_Long_Press_Response) > 0:
-            print(f"Response: {Button_D_Long_Press_Response.hex()}")
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+                
+        # # Read the response
+        # Button_D_Long_Press_Response = ser.read()
+        # if len(Button_D_Long_Press_Response) > 0:
+        #     print(f"Response: {Button_D_Long_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
 button_D_Long_thread = None
 
@@ -828,13 +1276,21 @@ def Button_UP_thread():
         
         # Button Push delay        
         time.sleep(.1)
-                
-        # Read the response
-        Button_UP_Press_Response = ser.read()
-        if len(Button_UP_Press_Response) > 0:
-            print(f"Response: {Button_UP_Press_Response.hex()}")
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+                
+        # # Read the response
+        # Button_UP_Press_Response = ser.read()
+        # if len(Button_UP_Press_Response) > 0:
+        #     print(f"Response: {Button_UP_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
 button_UP_thread = None
 
@@ -860,13 +1316,21 @@ def Button_DOWN_thread():
         
         # Button Push delay        
         time.sleep(.1)
-                
-        # Read the response
-        Button_DOWN_Press_Response = ser.read()
-        if len(Button_DOWN_Press_Response) > 0:
-            print(f"Response: {Button_DOWN_Press_Response.hex()}")
+
+        # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
+        ser.timeout = 0.1
+        data = ser.read(1)
+        if data:
+            print(f"Received character: {data.hex()}")
         else:
-            print("No response received")
+            print("No response")
+                
+        # # Read the response
+        # Button_DOWN_Press_Response = ser.read()
+        # if len(Button_DOWN_Press_Response) > 0:
+        #     print(f"Response: {Button_DOWN_Press_Response.hex()}")
+        # else:
+        #     print("No response received")
 
 button_DOWN_thread = None
 
@@ -881,7 +1345,7 @@ def stop_Button_DOWN_thread():
         stop_event.set()
         button_DOWN_thread.join()
 
-##########################
+###########GUI###########
 
 # Handmic up/down buttons
 button_up = tk.Button(window, text="UP", font=("Arial Black", 10, "bold"), foreground="white", background="#262626", highlightthickness=0, border=0, padx=14, pady=-20, command=start_Button_UP_thread)
@@ -1004,49 +1468,155 @@ resize_button_ptt = button_ptt_image.resize((71, 59), Image.ANTIALIAS)
 button_ptt = ImageTk.PhotoImage(resize_button_ptt)
 button_ptt_button = PTTButton(window, image=button_ptt, border=0, highlightthickness=0, padx=0, pady=0)
 button_ptt_button.place(x=20, y=20)
-#button_ptt_label = tk.Label(window, text="PTT", font=("Arial Black", 10, "bold"), anchor="s", foreground="white", border=0, highlightthickness=0, background="#2B2B2B", activebackground="#2B2B2B")
-#button_ptt_label.place(x=40, y=40)
 red_light = tk.Label(window, bg="#F0F0F0", width=1, height=1, bd=0, highlightthickness=1, highlightbackground="gray", relief="solid")
 red_light.place(x=30, y=30)
+  
+
+def open_conf_window():
+    # ser.close()
+    # print("Serial port closed")
+    create_settings_window
+
+## Conf Button
+script_dir = os.path.dirname(os.path.abspath(__file__))
+image_path = os.path.join(script_dir, "button_settings.png")
+button_settings_image = Image.open(image_path)
+resize_button_settings = button_settings_image.resize((71, 59), Image.ANTIALIAS)
+button_settings = ImageTk.PhotoImage(resize_button_settings)
+button_settings_button = tk.Button(window, image=button_settings, border=0, highlightthickness=0, padx=0, pady=0, command=create_settings_window)
+button_settings_button.place(x=20,y=520)
 
 # Define the thread function for serial communication
-def serial_thread():
+def serial_thread_function():
     # Check if the port is open
-    if ser.is_open:
+    global ser
+    if ser is not None and ser.is_open:
         print(f"Connected to {port}")
         red_light.configure(bg="#00C800") #Green
+        button_connect_button.configure(state="disabled")
 
-        while not ser_stop_event.is_set():
+        while ser.is_open and not ser_stop_event.is_set():
             if stop_event.is_set():
                 break
             # Send the hex value
             IRP_MJ_WRITE = b'\x06'
             ser.write(IRP_MJ_WRITE)
-#            print(f"IRP_MJ_WRITE: {IRP_MJ_WRITE.hex()}")
+            # print(f"IRP_MJ_WRITE: {IRP_MJ_WRITE.hex()}")
 
             # Read the response
             IRP_MJ_READ = ser.read()
             if len(IRP_MJ_READ) > 0:
-#                print(f"IRP_MJ_READ: {IRP_MJ_READ.hex()}")
+            # print(f"IRP_MJ_READ: {IRP_MJ_READ.hex()}")
                 pass
             else:
-#                print("No response received")
+            # print("No response received")
                 pass
 
             # Wait for 1 second
-            time.sleep(1)
+            time.sleep(pollinterval)
+            #print(pollinterval)
 
         # Close the serial port
-        #red_light.configure(bg="#F0F0F0") #Gray
         ser.close()
         print("Serial port closed")
         pass
     else:
         print(f"Failed to connect to {port}")
 
-# Create and start the serial thread
-serial_thread = threading.Thread(target=serial_thread)
-serial_thread.start()
+def start_serial_thread():
+    #global serial_thread 
+    # Create and start the serial thread
+    serial_thread = threading.Thread(target=serial_thread_function)
+    serial_thread.daemon = True
+    serial_thread.start()
+    return serial_thread
+
+serial_thread = None
+
+def serial_connect():
+    global ser, serial_thread, port
+    
+    if serial_thread and serial_thread.is_alive():
+        print("Serial thread is running")
+    else:
+        print("Serial thread is not running")
+    
+    #Read .conf file
+    config.read(config_path)
+    config.sections()
+    print(config.sections())
+
+    # Configure callsign
+    #callsign = "KI5QPY"
+    callsign = config.get('Operator', 'callsign')
+    # Configure the serial port
+    #port = 'COM4'  # Replace with the appropriate port for your system
+    port = config.get('Serial', 'port')
+    print(port)
+    baudrate = config.get('Serial', 'baudrate')                 #Default = 115200
+    print(baudrate)
+    timeout = int(config.get('Serial', 'timeout'))              #Default = 1 (seconds)
+    print(timeout)
+    pollinterval = int(config.get('Serial', 'pollinterval'))    #Default = 1 (seconds)
+    print(pollinterval)
+    conf_parity = config.get('Serial', 'parity')                #Default = PARITY_NONE
+    # Assign the appropriate parity value based on conf_parity
+    if conf_parity == "PARITY_NONE":
+        parity = serial.PARITY_NONE
+    elif conf_parity == "PARITY_EVEN":
+        parity = serial.PARITY_EVEN
+    elif conf_parity == "PARITY_ODD":
+        parity = serial.PARITY_ODD
+    elif conf_parity == "PARITY_MARK":
+        parity = serial.PARITY_MARK
+    elif conf_parity == "PARITY_SPACE":
+        parity = serial.PARITY_SPACE
+    else:
+        parity = serial.PARITY_NONE
+    print(parity)
+
+    conf_stopbits = config.get('Serial', 'stopbits')        #Default = STOPBITS_ONE
+    if conf_stopbits == "STOPBITS_ONE":
+            stopbits = serial.STOPBITS_ONE
+    elif conf_stopbits == "STOPBITS_ONE_POINT_FIVE":
+            stopbits = serial.STOPBITS_ONE_POINT_FIVE
+    elif conf_stopbits == "STOPBITS_TWO":
+            stopbits = serial.STOPBITS_TWO
+    else:
+        stopbits = serial.STOPBITS_ONE
+    print(stopbits)
+
+    conf_bytesize = config.get('Serial', 'bytesize')        #Default = EIGHTBITS
+    if conf_bytesize == "FIVEBITS":
+            bytesize = serial.FIVEBITS
+    elif conf_bytesize == "SIXBITS":
+            bytesize = serial.SIXBITS
+    elif conf_bytesize == "SEVENBITS":
+            bytesize = serial.SEVENBITS
+    elif conf_bytesize == "EIGHTBITS":
+            bytesize = serial.EIGHTBITS
+    else:
+        bytesize = serial.EIGHTBITS
+    print(bytesize)
+
+    # Open the serial port
+    try:
+        ser = serial.Serial(port, baudrate, timeout=timeout, parity=parity, stopbits=stopbits, bytesize=bytesize)
+    except Exception as e:
+        print(f"Error: {e}")
+    serial_thread = start_serial_thread()
+
+
+serial_thread = start_serial_thread()
+
+## Connect Button
+script_dir = os.path.dirname(os.path.abspath(__file__))
+image_path = os.path.join(script_dir, "button_connect.png")
+button_connect_image = Image.open(image_path)
+resize_button_connect = button_connect_image.resize((71, 59), Image.ANTIALIAS)
+button_connect = ImageTk.PhotoImage(resize_button_connect)
+button_connect_button = tk.Button(window, image=button_connect, border=0, highlightthickness=0, padx=0, pady=0, command=serial_connect, state="disabled")
+button_connect_button.place(x=20,y=455)
 
 def close_window():
     stop_event.set()
