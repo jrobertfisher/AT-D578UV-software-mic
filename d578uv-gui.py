@@ -1044,6 +1044,9 @@ def Button_B_thread():
         ser.write(Button_B_Press)
         print(f"Sent: {Button_B_Press.hex()}")
 
+        # Button Push delay        
+        time.sleep(.1)
+
         # IRP_MJ_DEVICE_CONTROL (IOCTL_SERIAL SET and GET)
         ser.timeout = 0.1
         data = ser.read(1)
