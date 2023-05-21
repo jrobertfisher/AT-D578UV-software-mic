@@ -28,3 +28,5 @@ Software Mic v1.0.2 Release Notes
     When settings button is pressed, the serial connection is stopped, when the connect button is pressed, the settings are read from the .conf file and a new connection is started.
     Added icons.
     Windows EXE compiled and posted in the dist folder.
+Software Mic v1.0.3 Release Notes
+    Fixed bug with B button.
