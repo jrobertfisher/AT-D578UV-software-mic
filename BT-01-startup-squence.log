@@ -1,0 +1,745 @@
+PS C:\Users\hex_\OneDrive\Documents\GitHub\at-578uv-hex-scanner>  c:; cd 'c:\Users\hex_\OneDrive\Documents\GitHub\at-578uv-hex-scanner'; & 'C:\Users\hex_\AppData\Local\Microsoft\WindowsApps\python3.11.exe' 'c:\Users\hex_\.vscode\extensions\ms-python.python-2023.8.0\pythonFiles\lib\python\debugpy\adapter/../..\debugpy\launcher' '51298' '--' 'C:\Users\hex_\OneDrive\Documents\GitHub\at-578uv-hex-scanner\hex-scanner.py' 
+
+##These first three seem to wake the radio up or prepare it for BT-01 mode, without them it won't flip into this mode.
+#1
+Command - hex: 2b 41 44 41 54 41 3a 30 30 2c 30 30 31 0d 0a 61 0d 0a
+Command - ascii: +ADATA:00,001
+a
+
+#2
+No response received
+Command - hex: 2b 41 44 41 54 41 3a 30 30 2c 30 30 31 0d 0a 61 0d 0a
+Command - ascii: +ADATA:00,001
+a
+
+#3
+No response received
+Command - hex: 2b 41 44 41 54 41 3a 30 30 2c 30 30 31 0d 0a 61 0d 0a
+Command - ascii: +ADATA:00,001
+a
+
+No response received
+
+##Tells the radio to change to COM MODE
+Command - hex: 2b41444154413a30302c3031360d0a0144353738555620434f4d204d4f44450d0a
+Command - ascii: +ADATA:00,016
+☺D578UV COM MODE
+
+Response - hex: 2b41444154413a30302c3030340d0a030100000d0a
+Response - ascii: +ADATA:00,004
+♥☺
+
+##Tells the radio to change to COM MODE
+Command - hex: 2b41444154413a30302c3031360d0a0144353738555620434f4d204d4f44450d0a
+Command - ascii: +ADATA:00,016
+☺D578UV COM MODE
+
+Response - hex: 2b41444154413a30302c3030350d0a03010000040d0a
+Response - ascii: +ADATA:00,005
+♥☺♦
+
+##Checks Bluetooth Software version on the radio.
+Command - hex: 2b41444154413a30302c3030360d0a0402070000000d0a
+Command - ascii: +ADATA:00,006
+♦☻
+
+Response - hex: 2b41444154413a30302c3033330d0a0402455431325f415151585f56313030333600000000000000000000000000004b0d0a
+Response - ascii: +ADATA:00,033
+♦☻ET12_AQQX_V10036K
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0405070000000d0a
+Command - ascii: +ADATA:00,006
+♦♣
+
+Response - hex: 2b41444154413a30302c3039390d0a040500000000000001000101010002000100000505050500000f0d00000100040001000000010100000600000005010000 
+Response - ascii: +ADATA:00,099
+☺♦☺☺☺♠♣☺♣♣♣♣
+Response - hex: 0400000100000000000000020000010000005a6202006cdc020085cf00c08009010085cf00c0800901005a6202006cdc02a80d0a
+Response - ascii: ♦☺☻☺Zb☻lÜ☻ÏÀ  ☺ÏÀ     ☺Zb☻lÜ☻¨
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0406070000000d0a
+Command - ascii: +ADATA:00,006
+♦♠
+
+Response - hex: 2b41444154413a30302c3039390d0a0406e8030000e8030000e8030a000a000a000a000a00d0070000d0070000d0070a000a000a000a000a00b80b0000b80b00
+Response - ascii: +ADATA:00,099
+♦♠è♥è♥è♥
+
+
+
+
+ÐÐÐ
+
+
+
+
+¸
+¸
+
+Response - hex: 00b80b0a000a000a000a000a00ffff0000000000000100000005030200000000010000000000000000010e0400000000004c0d0a
+Response - ascii: ¸
+
+
+
+
+
+ÿÿ☺♣♥☻☺☺♦L
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0407070000000d0a
+Command - ascii: +ADATA:00,006
+♦
+
+Response - hex: 2b41444154413a30302c3033390d0a040700000000000000000002331107271b2f2c2d2e08301a321c20000f041300000000000002380d0a
+Response - ascii: +ADATA:00,039
+♦☻3◄→2∟ ♦‼☻8
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0409070000000d0a
+Command - ascii: +ADATA:00,006
+♦
+
+Response - hex: 2b41444154413a30302c3134310d0a0409000000000000000000000000000000000000000000000000000000000000000000000000000000000000001e1e0000
+Response - ascii: +ADATA:00,141
+♦       ▲▲
+Response - hex: 000100190000000000000000000000001102070f000000000001000000000000000000000000000103b00420030000000000000a000a00000000000000840340 
+Response - ascii: ☺↓◄☻☺☺♥°♦ ♥
+
+♥@
+Response - hex: 060000000000000a000a00000000000000020000000000000000005f0d0a
+Response - ascii: ♠
+
+☻_
+
+##Analog APRS Config - TOCALL=APAT51, Callsign=KI5QPY, Digipeater Path= WIDE1-1,WIDE2-2
+Command - hex: 2b41444154413a30302c3030360d0a040d070000000d0a
+Command - ascii: +ADATA:00,006
+♦
+
+Response - hex: 2b41444154413a30302c3132330d0a040d00144390001e00001100000800011700000071000000415041543531004b49355150590957494445312d312c574944 
+Response - ascii: +ADATA:00,123
+¶C▲☺↨qAPAT51KI5QPY      WIDE1-1,WID
+Response - hex: 45322d320000000000002f6b033c000000a20fa20fa20fa20fa20fa20fa20fa20f00310999000000000000000000000000000000000000000000000000000000 
+Response - ascii: E2-2/k♥<¢¢¢¢¢¢¢¢1
+Response - hex: 000000000000000000e20d0a
+Response - ascii: â
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a040e070000000d0a
+Command - ascii: +ADATA:00,006
+♦
+
+Response - hex: 2b41444154413a30302c3038370d0a040e0000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000
+Response - ascii: +ADATA:00,087
+♦☻
+Response - hex: 00ff0100000000000000000000000000000000000000000000000000000000000000000000140d0a
+Response - ascii: ÿ☺¶
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0410070000000d0a
+Command - ascii: +ADATA:00,006
+♦►
+
+Response - hex: 2b41444154413a30302c3036340d0a04100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 
+Response - ascii: +ADATA:00,064
+♦►
+Response - hex: 0000000000000000000000000000140d0a
+Response - ascii: ¶
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a040a070000000d0a
+Command - ascii: +ADATA:00,006
+♦
+
+
+Response - hex: 2b41444154413a30302c3133310d0a040affffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+Response - ascii: +ADATA:00,131
+♦
+ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+Response - hex: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff 
+Response - ascii: ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+Response - hex: ffffffffffffffffffffffffffffffffff8e0d0a
+Response - ascii: ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a040b070000000d0a
+Command - ascii: +ADATA:00,006
+♦
+
+
+Response - hex: 2b41444154413a30302c3133310d0a040bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff 
+Response - ascii: +ADATA:00,131
+♦
+ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+Response - hex: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+Response - ascii: ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+Response - hex: ffffffffffffffffffffffffffffffffff8f0d0a
+Response - ascii: ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a040c070000000d0a
+Command - ascii: +ADATA:00,006
+♦
+
+
+Response - hex: 2b41444154413a30302c3033360d0a040c000000000000000000000000000000000000000000000000000000000000000000100d0a
+Response - ascii: +ADATA:00,036
+♦
+►
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0411070000000d0a
+Command - ascii: +ADATA:00,006
+♦◄
+
+Response - hex: 2b41444154413a30302c3033350d0a0411ffffff0000000000000000000000000000000000000000000000000000000000120d0a
+Response - ascii: +ADATA:00,035
+♦◄ÿÿÿ↕
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0412070000000d0a
+Command - ascii: +ADATA:00,006
+♦↕
+
+Response - hex: 2b41444154413a30302c3033350d0a04120100000000000000000000000000000000000000000000000000000000000000170d0a
+Response - ascii: +ADATA:00,035
+♦↕☺↨
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0413070000000d0a
+Command - ascii: +ADATA:00,006
+♦‼
+
+Response - hex: 2b41444154413a30302c3031370d0a04130e0a00141400000000011400000a760d0a
+Response - ascii: +ADATA:00,017
+♦‼
+¶¶☺¶
+v
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0414070000000d0a
+Command - ascii: +ADATA:00,006
+♦¶
+
+Response - hex: 2b41444154413a30302c3033350d0a0414000000004600000000000000140a0014000d0014020014000000000000000000c70d0a
+Response - ascii: +ADATA:00,035
+♦¶F¶
+¶☻¶Ç
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0415070000000d0a
+Command - ascii: +ADATA:00,006
+♦§
+
+Response - hex: 2b41444154413a30302c3033350d0a04157f00000000000000000000000000000000000000000000000000000000000000980d0a
+Response - ascii: +ADATA:00,035
+♦§
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a041b070000000d0a
+Command - ascii: +ADATA:00,006
+
+
+
+
+esponse - hex: 2b41444154413a30302c3036300d0a041b000000ff00ff00ff00ff00000000000000000000000000000000000000000000000018010000007800000002000000  
+Response - ascii: +ADATA:00,060
+♦ÿÿÿ↑☺x☻
+Response - hex: 00000000000000000000ae0d0a
+Response - ascii: ®
+
+##Checks the SCT 3258 Version - V2.01.07BF is correct
+Command - hex: 2b41444154413a30302c3030360d0a041c070000000d0a
+Command - ascii: +ADATA:00,006
+♦∟
+
+Response - hex: 2b41444154413a30302c3131390d0a041c000000000000000000000000000000000000000000000000000000000000000056322e30312e303742460000010000
+Response - ascii: +ADATA:00,119
+♦∟V2.01.07BF☺
+Response - hex: 000000000000000000000000000000000000000000000000000000000000000000ffff0000000000000000000000000000000000000000000000000000000000 
+Response - ascii: ÿÿ
+Response - hex: 0000000000530d0a
+Response - ascii: S
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0416070000000d0a
+Command - ascii: +ADATA:00,006
+♦▬
+
+Response - hex: 2b41444154413a30302c3130330d0a0416ffffffffffffffffffffffffffffffffffffffffffffffffffff010000000000000000000000000000000000000000 
+Response - ascii: +ADATA:00,103
+♦▬ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ☺
+Response - hex: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010d0a
+Response - ascii: ☺
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0417070000000d0a
+Command - ascii: +ADATA:00,006
+♦↨
+
+Response - hex: 2b41444154413a30302c3130330d0a04170000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 
+Response - ascii: +ADATA:00,103
+♦↨
+Response - hex: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001b0d0a
+Response - ascii:
+
+
+## Note sure why Command was cut off to "ommand" here.
+ommand - hex: 2b41444154413a30302c3030360d0a0418070000000d0a
+Command - ascii: +ADATA:00,006
+♦↑
+
+Response - hex: 2b41444154413a30302c3130330d0a04180000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+Response - ascii: +ADATA:00,103
+♦↑
+Response - hex: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001c0d0a
+Response - ascii: ∟
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0419070000000d0a
+Command - ascii: +ADATA:00,006
+♦↓
+
+Response - hex: 2b41444154413a30302c3130330d0a04190000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+Response - ascii: +ADATA:00,103
+♦↓
+Response - hex: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001d0d0a
+Response - ascii: ↔
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a041a070000000d0a
+Command - ascii: +ADATA:00,006
+♦→
+
+Response - hex: 2b41444154413a30302c3130330d0a041a0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 
+Response - ascii: +ADATA:00,103
+♦→
+Response - hex: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000f8180d0a
+Response - ascii: ☻ø↑
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a041d070000000d0a
+Command - ascii: +ADATA:00,006
+♦↔
+
+Response - hex: 2b41444154413a30302c3031380d0a041d000000120101080100012020202000bf0d0a
+Response - ascii: +ADATA:00,018
+♦↔↕☺☺☺    ¿
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a041e070000000d0a
+Command - ascii: +ADATA:00,006
+♦▲
+
+Response - hex: 2b41444154413a30302c3032350d0a041e000000141f1f0000000000141f1f0c00000000000000d20d0a
+Response - ascii: +ADATA:00,025
+♦▲¶▼▼¶▼▼
+Ò
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a041f070000000d0a
+Command - ascii: +ADATA:00,006
+♦▼
+
+Response - hex: 2b41444154413a30302c3130390d0a041f010000000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+Response - ascii: +ADATA:00,109
+♦▼☺ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+Response - hex: ffffffffffffffffffffffffffffffffffffffffffffffffff526f616d205a6f6e6520310000000000000000000000000000000000000000000000810d0a     
+Response - ascii: ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿRoam Zone 1
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0422070000000d0a
+Command - ascii: +ADATA:00,006
+♦"
+
+Response - hex: 2b41444154413a30302c3134370d0a0422010100ffffffffffff000000010200ffffffffffff000000010300ffffffffffff000000010400ffffffffffff0000 
+Response - ascii: +ADATA:00,147
+♦"☺☺ÿÿÿÿÿÿ☺☻ÿÿÿÿÿÿ☺♥ÿÿÿÿÿÿ☺♦ÿÿÿÿÿÿ
+Response - hex: 00010500ffffffffffff000000010600ffffffffffff000000010700ffffffffffff000000010800ffffffffffff000000010900ffffffffffff000000010a00
+Response - ascii: ☺♣ÿÿÿÿÿÿ☺♠ÿÿÿÿÿÿ☺ÿÿÿÿÿÿÿÿÿÿÿÿ☺        ÿÿÿÿÿÿ☺
+
+Response - hex: ffffffffffff000000010b00ffffffffffff000000010c00ffffffffffff000000380d0a
+Response - ascii: ÿÿÿÿÿÿ☺
+ÿÿÿÿÿÿ☺
+ÿÿÿÿÿÿ8
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0423070000000d0a
+Command - ascii: +ADATA:00,006
+♦#
+
+Response - hex: 2b41444154413a30302c3134370d0a0423010d00ffffffffffff000000010100ffffffffffff000000010200ffffffffffff000000010300ffffffffffff0000
+Response - ascii: +ADATA:00,147
+ÿÿÿÿÿÿ☺☺ÿÿÿÿÿÿ☺☻ÿÿÿÿÿÿ☺♥ÿÿÿÿÿÿ
+Response - hex: 00010400ffffffffffff000000010500ffffffffffff000000010600ffffffffffff000000010700ffffffffffff000000010800ffffffffffff000000010900 
+Response - ascii: ☺♦ÿÿÿÿÿÿ☺♣ÿÿÿÿÿÿ☺♠ÿÿÿÿÿÿ☺ÿÿÿÿÿÿÿÿÿÿÿÿ☺
+Response - hex: ffffffffffff000000010a00ffffffffffff000000010b00ffffffffffff0000003a0d0a
+Response - ascii: ÿÿÿÿÿÿ☺
+ÿÿÿÿÿÿ☺
+ÿÿÿÿÿÿ:
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0424070000000d0a
+Command - ascii: +ADATA:00,006
+♦$
+
+Response - hex: 2b41444154413a30302c3033350d0a042403000000000000000000000000000000000000000000000000000000000000002b0d0a
+Response - ascii: +ADATA:00,035
+♦$♥+
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0450070000000d0a
+Command - ascii: +ADATA:00,006
+♦P
+
+Response - hex: 2b41444154413a30302c3030350d0a045005055e0d0a
+Response - ascii: +ADATA:00,005
+♦P♣♣^
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0426000000000d0a
+Command - ascii: +ADATA:00,006
+♦&
+
+##Unknown
+Response - hex: 2b41444154413a30302c3137320d0a042600a100a200a300a400a500a600a700a800a900aa00ab00ac00ad00ae00af00b000b100b200b300b400b500b600b900
+Response - ascii: +ADATA:00,172
+♦&¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶¹
+Response - hex: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff 
+Response - ascii: ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+Response - hex: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff260d0a
+Response - ascii: ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ&
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0426010000000d0a
+Command - ascii: +ADATA:00,006
+♦&☺
+
+Response - hex: 2b41444154413a30302c3137320d0a042601ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff 
+Response - ascii: +ADATA:00,172
+♦&☺ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+Response - hex: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+Response - ascii: ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+Response - hex: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff830d0a       
+Response - ascii: ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0426020000000d0a
+Command - ascii: +ADATA:00,006
+♦&☻
+
+Response - hex: 2b41444154413a30302c3137320d0a042602ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+Response - ascii: +ADATA:00,172
+♦&☻ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+Response - hex: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff 
+Response - ascii: ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+Response - hex: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffa100a200cb0d0a
+Response - ascii: ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ¡¢Ë
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0426050000000d0a
+Command - ascii: +ADATA:00,006
+♦&♣
+
+Response - hex: 2b41444154413a30302c3137320d0a042605a100a200a300a400a500d000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+Response - ascii: +ADATA:00,172
+♦&♣¡¢£¤¥Ðÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+Response - hex: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff 
+Response - ascii: ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+Response - hex: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff920d0a
+Response - ascii: ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0426060000000d0a
+Command - ascii: +ADATA:00,006
+♦&♠
+
+Response - hex: 2b41444154413a30302c3137320d0a042606ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff 
+Response - ascii: +ADATA:00,172
+♦&♠ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+Response - hex: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+Response - ascii: ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+Response - hex: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff880d0a       
+Response - ascii: ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0426070000000d0a
+Command - ascii: +ADATA:00,006
+♦&
+
+Response - hex: 2b41444154413a30302c3137320d0a042607ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff 
+Response - ascii: +ADATA:00,172
+♦&ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+Response - hex: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff 
+Response - ascii: ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+Response - hex: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff000000008d0d0a
+Response - ascii: ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0428070000000d0a
+Command - ascii: +ADATA:00,006
+♦(
+
+Response - hex: 2b41444154413a30302c3033350d0a042801000000000000000000000000000000010000000000000000000000000000002e0d0a
+Response - ascii: +ADATA:00,035
+♦(☺☺.
+
+##Looks like this is checking the zone of VFO A - it was in memory mode - "Williamson Co" was correct
+Command - hex: 2b41444154413a30302c3030360d0a0429070000000d0a
+Command - ascii: +ADATA:00,006
+♦)
+
+Response - hex: 2b41444154413a30302c3033370d0a042957696c6c69616d736f6e20436f000000000000000000000000000000000000000f05320d0a
+Response - ascii: +ADATA:00,037
+♦)Williamson Co♣2
+
+##Looks like this is checking the zone of VFO B - it was in VFO mode - "Travis - W5KA" was correct
+Command - hex: 2b41444154413a30302c3030360d0a042a070000000d0a
+Command - ascii: +ADATA:00,006
+♦*
+
+Response - hex: 2b41444154413a30302c3033370d0a042a547261766973202d2057354b41000000000000000000000000000000000000000d053e0d0a
+Response - ascii: +ADATA:00,037
+♣>Travis - W5KA
+
+##Looks like this is checking the channel of VFO A - it was in memory mode - "WCARC-W 2m" was correct
+Command - hex: 2b41444154413a30302c3030360d0a042c070000000d0a
+Command - ascii: +ADATA:00,006
+♦,
+
+Response - hex: 2b41444154413a30302c3131380d0a042c146640000006000088051c1c00000000cf09000000000000001000ffff00000001000057434152432d5720326d0000 
+Response - ascii: +ADATA:00,118
+♦,¶f@♠♣∟∟Ï      ►ÿÿ☺WCARC-W 2m
+Response - hex: 0000000000000000000000000d0000000064640000000500a601031824714b4935515059000000000000000000000000031824714b4935515059000000000000
+dd♣¦☺♥↑$qKI5QPY♥↑$qKI5QPY
+Response - hex: 00000000b60d0a
+Response - ascii: ¶
+
+##Looks like this is checking the channel of VFO B - it was in VFO mode - "Channel VFO" was correct it was on 146.64000
+Command - hex: 2b41444154413a30302c3030360d0a042d070000000d0a
+Command - ascii: +ADATA:00,006
+♦-
+
+Response - hex: 2b41444154413a30302c3132310d0a042d14664000155000000800000000000000cf09000000000000000000ffff0000000100004368616e6e656c2056464f20 
+Response - ascii: +ADATA:00,121
+♦-¶f@§Ï ÿÿ☺Channel VFO
+Response - hex: 4200000000000000000000000d0000000064640000000500d001031824714b4935515059000000000000000000000000031824714b4935515059000000000000
+dd♣Ð☺♥↑$qKI5QPY♥↑$qKI5QPY
+Response - hex: 0000000000ffffe40d0a
+Response - ascii: ÿÿä
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0430070000000d0a
+Command - ascii: +ADATA:00,006
+♦0
+
+Response - hex: 2b41444154413a30302c3033350d0a04300000000000000000000000000000000000000000000000000000000000000000340d0a
+Response - ascii: +ADATA:00,035
+♦04
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0431070000000d0a
+Command - ascii: +ADATA:00,006
+♦1
+
+Response - hex: 2b41444154413a30302c3033350d0a04310000000000000000000000000000000000000000000000000000000000000000350d0a
+Response - ascii: +ADATA:00,035
+♦15
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a044f070000000d0a
+Command - ascii: +ADATA:00,006
+♦O
+
+Response - hex: 2b41444154413a30302c3037300d0a044f1625500000000000100000000000000000000000000000000000000000000000000000000000000000000000000000 
+Response - ascii: +ADATA:00,070
+♦O▬%P►
+Response - hex: 0000000000000000000000000000000000000000ee0d0a
+Response - ascii: î
+
+##Unknown - this might be the name of the radio
+Command - hex: 2b41444154413a30302c3030360d0a0432070000000d0a
+Command - ascii: +ADATA:00,006
+♦2
+
+Response - hex: 2b41444154413a30302c3033350d0a043203182471004b4935515059000000000000000000000000000000000000000000a90d0a
+Response - ascii: +ADATA:00,035
+♦2♥↑$qKI5QPY©
+
+##Unknown - maybe radio name?
+Command - hex: 2b41444154413a30302c3030360d0a0433070000000d0a
+Command - ascii: +ADATA:00,006
+♦3
+
+Response - hex: 2b41444154413a30302c3033350d0a043303182471004b4935515059000000000000000000000000000000000000000000aa0d0a
+Response - ascii: +ADATA:00,035
+♦3♥↑$qKI5QPYª
+
+##Unknown - maybe radio name?
+Command - hex: 2b41444154413a30302c3030360d0a0437070000000d0a
+Command - ascii: +ADATA:00,006
+♦7
+
+Response - hex: 2b41444154413a30302c3130330d0a0437014b493551505900000000000000000000000000000000000000000000000000000000031824710000000000000000
+Response - ascii: +ADATA:00,103
+♦7☺KI5QPY♥↑$q
+Response - hex: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000af0d0a
+Response - ascii: ¯
+
+##Unknown - maybe radio name?
+Command - hex: 2b41444154413a30302c3030360d0a0438070000000d0a
+Command - ascii: +ADATA:00,006
+♦8
+
+Response - hex: 2b41444154413a30302c3130330d0a0438014b493551505900000000000000000000000000000000000000000000000000000000031824710000000000000000
+Response - ascii: +ADATA:00,103
+♦8☺KI5QPY♥↑$q
+Response - hex: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b00d0a
+Response - ascii: °
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0434070000000d0a
+Command - ascii: +ADATA:00,006
+♦4
+
+Response - hex: 2b41444154413a30302c3033350d0a0434910c4124000000000000000000000000000000000000000000000000000000003a0d0a
+Response - ascii: +ADATA:00,035
+♦4
+A$:
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0435070000000d0a
+Command - ascii: +ADATA:00,006
+♦5
+
+Response - hex: 2b41444154413a30302c3033350d0a0435910c4124000000000000000000000000000000000000000000000000000000003b0d0a
+Response - ascii: +ADATA:00,035
+♦5
+A$;
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a044a070000000d0a
+Command - ascii: +ADATA:00,006
+♦J
+
+Response - hex: 2b41444154413a30302c3133350d0a044affffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+Response - ascii: +ADATA:00,135
+♦Jÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+Response - hex: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff 
+Response - ascii: ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+Response - hex: ffffffffffffffffffffffffffffffffffffffffffca0d0a
+Response - ascii: ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÊ
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a044d070000000d0a
+Command - ascii: +ADATA:00,006
+♦M
+
+Response - hex: 2b41444154413a30302c3032390d0a044d0100000000000000000000000001000000000000000000000000530d0a
+Response - ascii: +ADATA:00,029
+♦M☺☺S
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a044e070000000d0a
+Command - ascii: +ADATA:00,006
+♦N
+
+Response - hex: 2b41444154413a30302c3030370d0a044e00880000da0d0a
+Response - ascii: +ADATA:00,007
+♦NÚ
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0451070000000d0a
+Command - ascii: +ADATA:00,006
+♦Q
+
+Response - hex: 2b41444154413a30302c3031320d0a045114390000e707060300990d0a
+Response - ascii: +ADATA:00,012
+♦Q¶9ç♠♥
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a045a070000000d0a
+Command - ascii: +ADATA:00,006
+♦Z
+
+Response - hex: 2b41444154413a30302c3031370d0a045a0000184000ff8c00000000000000410d0a
+Response - ascii: +ADATA:00,017
+♦Z↑@ÿA
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a045b070000000d0a
+Command - ascii: +ADATA:00,006
+♦[
+
+Response - hex: 2b41444154413a30302c3030340d0a045b005f0d0a
+Response - ascii: +ADATA:00,004
+♦[_
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a0459070000000d0a
+Command - ascii: +ADATA:00,006
+♦Y
+
+Response - hex: 2b41444154413a30302c3035390d0a04590000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+Response - ascii: +ADATA:00,059
+♦Y
+Response - hex: 0000000000000000ff5c0d0a
+Response - ascii: ÿ\
+
+##Unknown
+Command - hex: 2b41444154413a30302c3030360d0a045e070000000d0a
+Command - ascii: +ADATA:00,006
+♦^
+
+Response - hex: 2b41444154413a30302c3031390d0a045e0001000000000b0000000000000000006e0d0a
+Response - ascii: +ADATA:00,019
+♦^☺
+n
+
+##GPS data
+Command - hex: 2b41444154413a30302c3030360d0a0452070000000d0a
+Command - ascii: +ADATA:00,006
+♦R
+
+Response - hex: 2b41444154413a30302c3039340d0a045233302e3731363039334e00000000003039372e3933393435355700000000563a302e3066742f530000000000000000 
+Response - ascii: +ADATA:00,094
+♦R30.716093N097.939455WV:0.0ft/S
+Response - hex: 0000000000000000483a393730667400000032332d30362d3034000030323a35373a303500000000000000007d0d0a
+Response - ascii: H:970ft23-06-0402:57:05}
+
+##Completes Com Check and BT-01 now has control of the radio
+Command - hex: 2b41444154413a30302c3031340d0a64434f4d20434845434b20454e440d0a
+Command - ascii: +ADATA:00,014
+dCOM CHECK END
+
+Response - hex: 2b41444154413a30302c3030350d0a03640000670d0a
+Response - ascii: +ADATA:00,005
+♥dg
+
+#Com check close?
+Command - hex: 2b41444154413a30302c3030300d0a0d0a
+Command - ascii: +ADATA:00,000
+
+#Com check close?
+Command - hex: 2b41444154413a30302c3030300d0a0d0a
+Command - ascii: +ADATA:00,000
+
+#Keep-Alive / Heartbeat
+Command - hex: 2b41444154413a30302c3030310d0a610d0a
+Command - ascii: +ADATA:00,001
+a
+
+Response - hex: 2b41444154413a30302c3030350d0a03610000640d0a
+Response - ascii: +ADATA:00,005
+♥ad
+
+#Keep-Alive / Heartbeat
+Command - hex: 2b41444154413a30302c3030310d0a610d0a
+Command - ascii: +ADATA:00,001
+a
+
+Response - hex: 2b41444154413a30302c3030350d0a03610000640d0a
+Response - ascii: +ADATA:00,005
+♥ad
